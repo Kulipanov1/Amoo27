@@ -1,7 +1,7 @@
 import React from 'react';
 import { Tabs } from 'expo-router';
 import { Platform, StyleSheet, View } from 'react-native';
-import { Home, Users, Video, User } from 'lucide-react-native';
+import { Home, Users, Video, User, MessageCircle } from 'lucide-react-native';
 import { colors } from '@/constants/colors';
 import { spacing } from '@/constants/theme';
 
@@ -31,7 +31,7 @@ export default function TabsLayout() {
         options={{
           title: 'Matches',
           tabBarIcon: ({ color, size }) => (
-            <Users size={size} color={color} />
+            <MessageCircle size={size} color={color} />
           ),
         }}
       />

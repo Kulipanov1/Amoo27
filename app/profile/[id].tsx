@@ -305,11 +305,11 @@ export default function ProfileDetailScreen() {
           </TouchableOpacity>
           
           <TouchableOpacity 
-            style={[styles.actionButton, styles.superLikeButton]} 
+            style={[styles.actionButton, styles.superLikeButton, styles.superLikeHighlight]} 
             onPress={handleSuperLike}
             disabled={isDislikeLoading || isLikeLoading || isSuperLikeLoading}
           >
-            <Star size={24} color="white" />
+            <Star size={32} color="white" style={{ textShadowColor: colors.tertiary, textShadowRadius: 8 }} />
           </TouchableOpacity>
           
           <TouchableOpacity 
@@ -537,5 +537,12 @@ const styles = StyleSheet.create({
   },
   superLikeButton: {
     backgroundColor: colors.tertiary,
+  },
+  superLikeHighlight: {
+    borderWidth: 2,
+    borderColor: colors.tertiary,
+    shadowColor: colors.tertiary,
+    shadowOpacity: 0.5,
+    shadowRadius: 8,
   },
 });
