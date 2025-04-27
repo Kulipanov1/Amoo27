@@ -35,6 +35,14 @@ import { useLikeUser, useDislikeUser, useSuperLikeUser } from '@/lib/api';
 const windowWidth = Dimensions.get('window').width;
 const isWeb = Platform.OS === 'web';
 
+function safeBack(router) {
+  if (router.canGoBack && router.canGoBack()) {
+    router.back();
+  } else {
+    router.replace('/');
+  }
+}
+
 export default function ProfileDetailScreen() {
   const { id } = useLocalSearchParams();
   const router = useRouter();
@@ -68,13 +76,13 @@ export default function ProfileDetailScreen() {
               },
               {
                 text: translations.keepSwiping,
-                onPress: () => router.back(),
+                onPress: () => safeBack(router),
                 style: 'cancel',
               },
             ]
           );
         } else {
-          router.back();
+          safeBack(router);
         }
       },
       onError: (error) => {
@@ -96,7 +104,7 @@ export default function ProfileDetailScreen() {
     // Вызываем API
     dislikeUser({ dislikedUserId: user.id }, {
       onSuccess: () => {
-        router.back();
+        safeBack(router);
       },
       onError: (error) => {
         Alert.alert(
@@ -128,7 +136,7 @@ export default function ProfileDetailScreen() {
               },
               {
                 text: translations.keepSwiping,
-                onPress: () => router.back(),
+                onPress: () => safeBack(router),
                 style: 'cancel',
               },
             ]
@@ -140,7 +148,7 @@ export default function ProfileDetailScreen() {
             [
               {
                 text: 'OK',
-                onPress: () => router.back(),
+                onPress: () => safeBack(router),
               },
             ]
           );
@@ -340,17 +348,19 @@ const styles = StyleSheet.create({
   },
   photoGallery: {
     position: 'relative',
-    width: isWeb ? Math.min(windowWidth, 400) : '100%',
+    width: '100%',
+    maxWidth: 420,
     alignSelf: 'center',
   },
   mainPhoto: {
-    width: isWeb ? Math.min(windowWidth, 400) : '100%',
-    height: isWeb ? 400 : 300,
+    width: '100%',
+    aspectRatio: 3/4,
     borderRadius: 20,
     alignSelf: 'center',
     marginTop: isWeb ? 32 : 0,
     marginBottom: isWeb ? 16 : 0,
     backgroundColor: colors.card,
+    maxWidth: 420,
   },
   photoOverlay: {
     position: 'absolute',
