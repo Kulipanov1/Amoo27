@@ -10,7 +10,9 @@ import {
   SafeAreaView,
   TouchableWithoutFeedback,
   Keyboard,
-  ActivityIndicator
+  ActivityIndicator,
+  Dimensions,
+  Alert
 } from 'react-native';
 import { StatusBar } from 'expo-status-bar';
 import { useLocalSearchParams, useRouter, Stack } from 'expo-router';
@@ -26,6 +28,9 @@ import { borderRadius, fontSize, fontWeight, spacing } from '@/constants/theme';
 import { formatDate } from '@/utils/date';
 import { translations } from '@/constants/translations';
 import { useMatch, useMessages, useSendMessage, useMarkMessagesAsRead } from '@/lib/api';
+
+const windowWidth = Dimensions.get('window').width;
+const isWeb = Platform.OS === 'web';
 
 export default function ChatScreen() {
   const { id } = useLocalSearchParams();
@@ -56,9 +61,17 @@ export default function ChatScreen() {
   }, []);
   
   useEffect(() => {
-    // If match doesn't exist, go back
     if (!isLoading && !match) {
-      router.back();
+      Alert.alert(
+        translations.error,
+        'Чат не найден',
+        [
+          {
+            text: 'OK',
+            onPress: () => router.replace('/(tabs)/matches'),
+          },
+        ]
+      );
     }
   }, [match, isLoading]);
   
@@ -223,55 +236,50 @@ export default function ChatScreen() {
   return (
     <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
       <SafeAreaView style={styles.container}>
-        <StatusBar style={Platform.OS === 'ios' ? 'dark' : 'auto'} />
-        
-        <Stack.Screen
-          options={{
-            headerShown: false,
-          }}
-        />
-        
-        {renderHeader()}
-        
-        <KeyboardAvoidingView
-          style={styles.keyboardAvoidingView}
-          behavior={Platform.OS === 'ios' ? 'padding' : undefined}
-          keyboardVerticalOffset={Platform.OS === 'ios' ? 90 : 0}
-        >
-          <FlatList
-            ref={flatListRef}
-            data={groupedMessagesArray}
-            keyExtractor={(item) => item.date}
-            contentContainerStyle={styles.messagesList}
-            keyboardShouldPersistTaps="handled"
-            renderItem={({ item }) => (
-              <View>
-                <Text style={styles.dateHeader}>{item.date}</Text>
-                {item.messages.map((message: Message) => {
-                  const isFromCurrentUser = message.senderId === 'current-user';
-                  const showAvatar = !isFromCurrentUser && 
-                    (index === 0 || 
-                     item.messages[index - 1].senderId !== message.senderId);
-                  
-                  return (
-                    <MessageBubble
-                      key={message.id}
-                      message={message}
-                      isFromCurrentUser={isFromCurrentUser}
-                      showAvatar={showAvatar}
-                      avatarUrl={matchedUser?.photos[0]}
-                    />
-                  );
-                })}
-              </View>
-            )}
-            onContentSizeChange={() => 
-              flatListRef.current?.scrollToEnd({ animated: false })
-            }
-          />
-          
-          <MessageInput onSendMessage={handleSendMessage} />
-        </KeyboardAvoidingView>
+        <View style={styles.centeredContent}>
+          <StatusBar style={Platform.OS === 'ios' ? 'dark' : 'auto'} />
+          <Stack.Screen options={{ headerShown: false }} />
+          {renderHeader()}
+          <KeyboardAvoidingView
+            style={styles.keyboardAvoidingView}
+            behavior={Platform.OS === 'ios' ? 'padding' : undefined}
+            keyboardVerticalOffset={Platform.OS === 'ios' ? 90 : 0}
+          >
+            <FlatList
+              ref={flatListRef}
+              data={groupedMessagesArray}
+              keyExtractor={(item) => item.date}
+              contentContainerStyle={styles.messagesList}
+              keyboardShouldPersistTaps="handled"
+              renderItem={({ item }) => (
+                <View>
+                  <Text style={styles.dateHeader}>{item.date}</Text>
+                  {item.messages.map((message: Message) => {
+                    const isFromCurrentUser = message.senderId === 'current-user';
+                    const showAvatar = !isFromCurrentUser && 
+                      (index === 0 || 
+                       item.messages[index - 1].senderId !== message.senderId);
+                    
+                    return (
+                      <MessageBubble
+                        key={message.id}
+                        message={message}
+                        isFromCurrentUser={isFromCurrentUser}
+                        showAvatar={showAvatar}
+                        avatarUrl={matchedUser?.photos[0]}
+                      />
+                    );
+                  })}
+                </View>
+              )}
+              onContentSizeChange={() => 
+                flatListRef.current?.scrollToEnd({ animated: false })
+              }
+            />
+            
+            <MessageInput onSendMessage={handleSendMessage} />
+          </KeyboardAvoidingView>
+        </View>
       </SafeAreaView>
     </TouchableWithoutFeedback>
   );
@@ -281,6 +289,18 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: colors.background,
+    alignItems: isWeb ? 'center' : undefined,
+    paddingHorizontal: isWeb ? 24 : 0,
+  },
+  centeredContent: {
+    width: '100%',
+    maxWidth: 480,
+    alignSelf: 'center',
+    backgroundColor: colors.background,
+    borderRadius: isWeb ? 24 : 0,
+    ...isWeb ? { boxShadow: '0 4px 32px rgba(0,0,0,0.10)' } : {},
+    flex: 1,
+    overflow: 'hidden',
   },
   loadingContainer: {
     flex: 1,
