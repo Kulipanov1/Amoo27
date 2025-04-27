@@ -55,7 +55,18 @@ export default function ProfileDetailScreen() {
   const user = mockUsers.find(user => user.id === id);
   
   if (!user) {
-    router.back();
+    React.useEffect(() => {
+      Alert.alert(
+        translations.error,
+        'Пользователь не найден',
+        [
+          {
+            text: 'OK',
+            onPress: () => router.replace('/'),
+          },
+        ]
+      );
+    }, []);
     return null;
   }
   
@@ -185,126 +196,130 @@ export default function ProfileDetailScreen() {
       />
       
       <ScrollView contentContainerStyle={styles.scrollContent}>
-        <View style={styles.header}>
-          <TouchableOpacity 
-            style={styles.backButton}
-            onPress={() => router.back()}
-          >
-            <ArrowLeft size={24} color={colors.text} />
-          </TouchableOpacity>
-          
-          <TouchableOpacity 
-            style={styles.reportButton}
-            onPress={handleReport}
-          >
-            <Flag size={20} color={colors.error} />
-          </TouchableOpacity>
-        </View>
-        
-        <View style={styles.photoGallery}>
-          <Image
-            source={{ uri: user.photos[activePhotoIndex] }}
-            style={styles.mainPhoto}
-            contentFit="cover"
-          />
-          
-          <LinearGradient
-            colors={['transparent', 'rgba(0,0,0,0.7)']}
-            style={styles.photoOverlay}
-          >
-            <View style={styles.userBasicInfo}>
-              <View style={styles.nameAgeContainer}>
-                <Text style={styles.name}>{user.name}, {user.age}</Text>
-                {user.verified && (
-                  <View style={styles.verifiedBadge}>
-                    <Check size={14} color="white" />
-                  </View>
-                )}
-              </View>
-              
-              <View style={styles.locationContainer}>
-                <MapPin size={16} color="white" />
-                <Text style={styles.location}>{user.location} • {user.distance} км</Text>
-              </View>
-            </View>
-          </LinearGradient>
-          
-          <View style={styles.photoNav}>
-            {user.photos.map((_, index) => (
-              <TouchableOpacity
-                key={index}
-                style={[
-                  styles.photoNavDot,
-                  activePhotoIndex === index && styles.photoNavDotActive
-                ]}
-                onPress={() => setActivePhotoIndex(index)}
-              />
-            ))}
-          </View>
-        </View>
-        
-        <View style={styles.profileInfo}>
-          <View style={styles.section}>
-            <Text style={styles.sectionTitle}>{translations.about}</Text>
-            <Text style={styles.bioText}>{user.bio}</Text>
+        <View style={styles.centeredContent}>
+          <View style={styles.header}>
+            <TouchableOpacity 
+              style={styles.backButton}
+              onPress={() => router.back()}
+            >
+              <ArrowLeft size={24} color={colors.text} />
+            </TouchableOpacity>
+            
+            <TouchableOpacity 
+              style={styles.reportButton}
+              onPress={handleReport}
+            >
+              <Flag size={20} color={colors.error} />
+            </TouchableOpacity>
           </View>
           
-          <View style={styles.section}>
-            <Text style={styles.sectionTitle}>{translations.basicInfo}</Text>
+          <View style={styles.photoGallery}>
+            <Image
+              source={{ uri: user.photos[activePhotoIndex] }}
+              style={styles.mainPhoto}
+              contentFit="cover"
+            />
             
-            {user.occupation && (
-              <View style={styles.infoItem}>
-                <Briefcase size={18} color={colors.textSecondary} />
-                <Text style={styles.infoText}>{user.occupation}</Text>
-              </View>
-            )}
-            
-            {user.education && (
-              <View style={styles.infoItem}>
-                <GraduationCap size={18} color={colors.textSecondary} />
-                <Text style={styles.infoText}>{user.education}</Text>
-              </View>
-            )}
-          </View>
-          
-          <View style={styles.section}>
-            <Text style={styles.sectionTitle}>{translations.interests}</Text>
-            
-            <View style={styles.interestsContainer}>
-              {user.interests.map((interest, index) => (
-                <View key={index} style={styles.interestTag}>
-                  <Text style={styles.interestText}>{interest}</Text>
+            <LinearGradient
+              colors={['transparent', 'rgba(0,0,0,0.7)']}
+              style={styles.photoOverlay}
+            >
+              <View style={styles.userBasicInfo}>
+                <View style={styles.nameAgeContainer}>
+                  <Text style={styles.name}>{user.name}, {user.age}</Text>
+                  {user.verified && (
+                    <View style={styles.verifiedBadge}>
+                      <Check size={14} color="white" />
+                    </View>
+                  )}
                 </View>
+                
+                <View style={styles.locationContainer}>
+                  <MapPin size={16} color="white" />
+                  <Text style={styles.location}>{user.location} • {user.distance} км</Text>
+                </View>
+              </View>
+            </LinearGradient>
+            
+            <View style={styles.photoNav}>
+              {user.photos.map((_, index) => (
+                <TouchableOpacity
+                  key={index}
+                  style={[
+                    styles.photoNavDot,
+                    activePhotoIndex === index && styles.photoNavDotActive
+                  ]}
+                  onPress={() => setActivePhotoIndex(index)}
+                />
               ))}
+            </View>
+          </View>
+          
+          <View style={styles.profileInfo}>
+            <View style={styles.section}>
+              <Text style={styles.sectionTitle}>{translations.about}</Text>
+              <Text style={styles.bioText}>{user.bio}</Text>
+            </View>
+            
+            <View style={styles.section}>
+              <Text style={styles.sectionTitle}>{translations.basicInfo}</Text>
+              
+              {user.occupation && (
+                <View style={styles.infoItem}>
+                  <Briefcase size={18} color={colors.textSecondary} />
+                  <Text style={styles.infoText}>{user.occupation}</Text>
+                </View>
+              )}
+              
+              {user.education && (
+                <View style={styles.infoItem}>
+                  <GraduationCap size={18} color={colors.textSecondary} />
+                  <Text style={styles.infoText}>{user.education}</Text>
+                </View>
+              )}
+            </View>
+            
+            <View style={styles.section}>
+              <Text style={styles.sectionTitle}>{translations.interests}</Text>
+              
+              <View style={styles.interestsContainer}>
+                {user.interests.map((interest, index) => (
+                  <View key={index} style={styles.interestTag}>
+                    <Text style={styles.interestText}>{interest}</Text>
+                  </View>
+                ))}
+              </View>
             </View>
           </View>
         </View>
       </ScrollView>
       
-      <View style={styles.actionButtons}>
-        <TouchableOpacity 
-          style={[styles.actionButton, styles.dislikeButton]} 
-          onPress={handleDislike}
-          disabled={isDislikeLoading || isLikeLoading || isSuperLikeLoading}
-        >
-          <X size={24} color={colors.error} />
-        </TouchableOpacity>
-        
-        <TouchableOpacity 
-          style={[styles.actionButton, styles.superLikeButton]} 
-          onPress={handleSuperLike}
-          disabled={isDislikeLoading || isLikeLoading || isSuperLikeLoading}
-        >
-          <Star size={24} color="white" />
-        </TouchableOpacity>
-        
-        <TouchableOpacity 
-          style={[styles.actionButton, styles.likeButton]} 
-          onPress={handleLike}
-          disabled={isDislikeLoading || isLikeLoading || isSuperLikeLoading}
-        >
-          <Heart size={24} color="white" />
-        </TouchableOpacity>
+      <View style={styles.actionButtonsWrapper}>
+        <View style={styles.actionButtons}>
+          <TouchableOpacity 
+            style={[styles.actionButton, styles.dislikeButton]} 
+            onPress={handleDislike}
+            disabled={isDislikeLoading || isLikeLoading || isSuperLikeLoading}
+          >
+            <X size={24} color={colors.error} />
+          </TouchableOpacity>
+          
+          <TouchableOpacity 
+            style={[styles.actionButton, styles.superLikeButton]} 
+            onPress={handleSuperLike}
+            disabled={isDislikeLoading || isLikeLoading || isSuperLikeLoading}
+          >
+            <Star size={24} color="white" />
+          </TouchableOpacity>
+          
+          <TouchableOpacity 
+            style={[styles.actionButton, styles.likeButton]} 
+            onPress={handleLike}
+            disabled={isDislikeLoading || isLikeLoading || isSuperLikeLoading}
+          >
+            <Heart size={24} color="white" />
+          </TouchableOpacity>
+        </View>
       </View>
     </SafeAreaView>
   );
@@ -315,10 +330,24 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: colors.background,
     alignItems: isWeb ? 'center' : undefined,
+    paddingHorizontal: isWeb ? 24 : 0,
   },
   scrollContent: {
-    paddingBottom: 100,
+    paddingBottom: isWeb ? 40 : 120,
     alignItems: isWeb ? 'center' : undefined,
+    minHeight: '100%',
+    paddingHorizontal: isWeb ? 0 : spacing.md,
+  },
+  centeredContent: {
+    width: '100%',
+    maxWidth: 440,
+    alignSelf: 'center',
+    backgroundColor: colors.background,
+    borderRadius: isWeb ? 24 : 0,
+    ...isWeb ? { boxShadow: '0 4px 32px rgba(0,0,0,0.10)', transition: 'box-shadow 0.2s' } : {},
+    paddingBottom: 32,
+    marginTop: isWeb ? 32 : 0,
+    marginBottom: isWeb ? 32 : 0,
   },
   header: {
     flexDirection: 'row',
@@ -329,6 +358,8 @@ const styles = StyleSheet.create({
     right: 0,
     zIndex: 10,
     paddingHorizontal: spacing.md,
+    maxWidth: 440,
+    alignSelf: 'center',
   },
   backButton: {
     width: 40,
@@ -462,14 +493,27 @@ const styles = StyleSheet.create({
     color: colors.text,
     fontSize: fontSize.sm,
   },
+  actionButtonsWrapper: {
+    width: '100%',
+    alignItems: 'center',
+    ...(!isWeb ? {
+      position: 'absolute',
+      bottom: Platform.OS === 'ios' ? 40 : 20,
+      left: 0,
+      right: 0,
+    } : {
+      position: 'relative',
+      marginTop: 24,
+      marginBottom: 24,
+    }),
+  },
   actionButtons: {
-    position: 'absolute',
-    bottom: Platform.OS === 'ios' ? 40 : 20,
-    left: 0,
-    right: 0,
     flexDirection: 'row',
     justifyContent: 'center',
     gap: spacing.xl,
+    maxWidth: 440,
+    width: '100%',
+    alignSelf: 'center',
   },
   actionButton: {
     width: 60,
@@ -478,6 +522,10 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     ...shadows.medium,
+    ...isWeb ? {
+      transition: 'box-shadow 0.2s, transform 0.2s',
+      cursor: 'pointer',
+    } : {},
   },
   dislikeButton: {
     backgroundColor: 'white',
