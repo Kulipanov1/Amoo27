@@ -7,7 +7,8 @@ import {
   TouchableOpacity, 
   SafeAreaView,
   Platform,
-  Alert
+  Alert,
+  Dimensions
 } from 'react-native';
 import { StatusBar } from 'expo-status-bar';
 import { useLocalSearchParams, useRouter, Stack } from 'expo-router';
@@ -31,6 +32,9 @@ import { Button } from '@/components/Button';
 import { translations } from '@/constants/translations';
 import { useLikeUser, useDislikeUser, useSuperLikeUser } from '@/lib/api';
 
+const windowWidth = Dimensions.get('window').width;
+const isWeb = Platform.OS === 'web';
+
 export default function ProfileDetailScreen() {
   const { id } = useLocalSearchParams();
   const router = useRouter();
@@ -53,7 +57,6 @@ export default function ProfileDetailScreen() {
     // Вызываем API
     likeUser({ likedUserId: user.id }, {
       onSuccess: (data) => {
-        // Если есть совпадение, показываем уведомление
         if (data.match) {
           Alert.alert(
             translations.itsAMatch,
@@ -75,8 +78,16 @@ export default function ProfileDetailScreen() {
         }
       },
       onError: (error) => {
-        console.error('Ошибка при лайке:', error);
-        router.back();
+        Alert.alert(
+          translations.error,
+          'Не удалось поставить лайк. Попробуйте позже.',
+          [
+            {
+              text: 'OK',
+              onPress: () => router.replace('/'),
+            },
+          ]
+        );
       }
     });
   };
@@ -88,8 +99,16 @@ export default function ProfileDetailScreen() {
         router.back();
       },
       onError: (error) => {
-        console.error('Ошибка при дизлайке:', error);
-        router.back();
+        Alert.alert(
+          translations.error,
+          'Не удалось поставить дизлайк. Попробуйте позже.',
+          [
+            {
+              text: 'OK',
+              onPress: () => router.replace('/'),
+            },
+          ]
+        );
       }
     });
   };
@@ -98,7 +117,6 @@ export default function ProfileDetailScreen() {
     // Вызываем API
     superLikeUser({ superLikedUserId: user.id }, {
       onSuccess: (data) => {
-        // Если есть совпадение, показываем уведомление
         if (data.match) {
           Alert.alert(
             translations.itsAMatch,
@@ -129,8 +147,16 @@ export default function ProfileDetailScreen() {
         }
       },
       onError: (error) => {
-        console.error('Ошибка при суперлайке:', error);
-        router.back();
+        Alert.alert(
+          translations.error,
+          'Не удалось отправить суперлайк. Попробуйте позже.',
+          [
+            {
+              text: 'OK',
+              onPress: () => router.replace('/'),
+            },
+          ]
+        );
       }
     });
   };
@@ -280,9 +306,11 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: colors.background,
+    alignItems: isWeb ? 'center' : undefined,
   },
   scrollContent: {
-    paddingBottom: 100, // Место для кнопок действий
+    paddingBottom: 100,
+    alignItems: isWeb ? 'center' : undefined,
   },
   header: {
     flexDirection: 'row',
@@ -312,10 +340,17 @@ const styles = StyleSheet.create({
   },
   photoGallery: {
     position: 'relative',
+    width: isWeb ? Math.min(windowWidth, 400) : '100%',
+    alignSelf: 'center',
   },
   mainPhoto: {
-    width: '100%',
-    height: 500,
+    width: isWeb ? Math.min(windowWidth, 400) : '100%',
+    height: isWeb ? 400 : 300,
+    borderRadius: 20,
+    alignSelf: 'center',
+    marginTop: isWeb ? 32 : 0,
+    marginBottom: isWeb ? 16 : 0,
+    backgroundColor: colors.card,
   },
   photoOverlay: {
     position: 'absolute',
