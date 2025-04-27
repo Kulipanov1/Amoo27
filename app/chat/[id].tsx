@@ -28,6 +28,7 @@ import { borderRadius, fontSize, fontWeight, spacing } from '@/constants/theme';
 import { formatDate } from '@/utils/date';
 import { translations } from '@/constants/translations';
 import { useMatch, useMessages, useSendMessage, useMarkMessagesAsRead } from '@/lib/api';
+import * as ImagePicker from 'expo-image-picker';
 
 const windowWidth = Dimensions.get('window').width;
 const isWeb = Platform.OS === 'web';
@@ -87,6 +88,60 @@ export default function ChatScreen() {
       }
     }
   }, [matchId]);
+  
+  useEffect(() => {
+    // Добавляем тестовые сообщения только если их нет
+    if (matchMessages.length === 0 && match) {
+      const now = new Date();
+      const testMsgs = [
+        {
+          id: 'test-1',
+          matchId,
+          senderId: 'current-user',
+          receiverId: match.matchedUserId,
+          content: 'Привет! Это тестовое текстовое сообщение.',
+          timestamp: new Date(now.getTime() - 1000 * 60 * 60).toISOString(),
+          read: true,
+          type: 'text',
+        },
+        {
+          id: 'test-2',
+          matchId,
+          senderId: match.matchedUserId,
+          receiverId: 'current-user',
+          content: 'А вот и фото!',
+          mediaUrl: 'https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=400&q=80',
+          timestamp: new Date(now.getTime() - 1000 * 60 * 50).toISOString(),
+          read: true,
+          type: 'image',
+        },
+        {
+          id: 'test-3',
+          matchId,
+          senderId: 'current-user',
+          receiverId: match.matchedUserId,
+          content: 'Видео с отдыха',
+          mediaUrl: 'https://www.w3schools.com/html/mov_bbb.mp4',
+          timestamp: new Date(now.getTime() - 1000 * 60 * 40).toISOString(),
+          read: true,
+          type: 'video',
+        },
+        {
+          id: 'test-4',
+          matchId,
+          senderId: match.matchedUserId,
+          receiverId: 'current-user',
+          content: '',
+          mediaUrl: '',
+          duration: 15,
+          timestamp: new Date(now.getTime() - 1000 * 60 * 30).toISOString(),
+          read: true,
+          type: 'voice',
+        },
+      ];
+      testMsgs.forEach(msg => actions.addMessage(matchId, msg));
+    }
+  }, [matchId, match]);
   
   if (isLoading) {
     return (
@@ -198,6 +253,24 @@ export default function ChatScreen() {
     }
   };
   
+  const handleSendMedia = async (type: 'image' | 'video') => {
+    let result;
+    if (type === 'image') {
+      result = await ImagePicker.launchImageLibraryAsync({ mediaTypes: ImagePicker.MediaTypeOptions.Images });
+    } else {
+      result = await ImagePicker.launchImageLibraryAsync({ mediaTypes: ImagePicker.MediaTypeOptions.Videos });
+    }
+    if (!result.canceled && result.assets && result.assets.length > 0) {
+      const asset = result.assets[0];
+      handleSendMessage(asset.uri, type);
+    }
+  };
+  
+  const handleSendVoice = () => {
+    // Имитация голосового кружочка
+    handleSendMessage('', 'voice');
+  };
+  
   const renderHeader = () => (
     <View style={styles.header}>
       <TouchableOpacity 
@@ -277,7 +350,12 @@ export default function ChatScreen() {
               }
             />
             
-            <MessageInput onSendMessage={handleSendMessage} />
+            <MessageInput 
+              onSendMessage={handleSendMessage}
+              onSendImage={() => handleSendMedia('image')}
+              onSendVideo={() => handleSendMedia('video')}
+              onSendVoice={handleSendVoice}
+            />
           </KeyboardAvoidingView>
         </View>
       </SafeAreaView>
@@ -360,5 +438,19 @@ const styles = StyleSheet.create({
     color: colors.textSecondary,
     fontSize: fontSize.sm,
     marginVertical: spacing.md,
+  },
+  input: {
+    minHeight: 48,
+    maxHeight: 80,
+    borderRadius: 24,
+    fontSize: 18,
+    paddingHorizontal: 20,
+    ...isWeb ? { boxShadow: '0 2px 8px rgba(0,0,0,0.04)' } : {},
+  },
+  messageBubble: {
+    borderRadius: 20,
+    padding: 16,
+    marginVertical: 6,
+    ...isWeb ? { transition: 'box-shadow 0.2s', boxShadow: '0 2px 8px rgba(0,0,0,0.04)' } : {},
   },
 });
