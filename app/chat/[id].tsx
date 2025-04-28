@@ -34,6 +34,12 @@ import * as ImagePicker from 'expo-image-picker';
 const windowWidth = Dimensions.get('window').width;
 const isWeb = Platform.OS === 'web';
 
+function AmooLogo() {
+  return (
+    <Text style={{ fontSize: 28, fontWeight: '700', color: colors.primary, textAlign: 'center' }}>Amoo</Text>
+  );
+}
+
 export default function ChatScreen() {
   const { id } = useLocalSearchParams();
   const router = useRouter();
@@ -287,6 +293,7 @@ export default function ChatScreen() {
   
   const renderHeader = () => (
     <View style={styles.header}>
+      <AmooLogo />
       <TouchableOpacity 
         style={styles.backButton}
         onPress={() => router.back()}

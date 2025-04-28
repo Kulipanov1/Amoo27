@@ -22,12 +22,12 @@ const mockMatches: Match[] = [
     id: 'match-2',
     userId: 'current-user',
     matchedUserId: '2',
-    timestamp: new Date(Date.now() - 1000 * 60 * 60 * 24 * 5).toISOString(), // 5 days ago
+    timestamp: new Date(Date.now() - 1000 * 60 * 60 * 24 * 1).toISOString(),
     lastMessage: {
-      timestamp: new Date(Date.now() - 1000 * 60 * 60 * 24).toISOString(), // 1 day ago
-      text: "Может встретимся на выходных?",
-      senderId: 'current-user',
-      read: true,
+      timestamp: new Date(Date.now() - 1000 * 60 * 60 * 1).toISOString(),
+      text: "Давно не виделись! Как дела?",
+      senderId: '2',
+      read: false,
     },
   },
   {

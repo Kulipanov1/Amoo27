@@ -379,7 +379,7 @@ export const ProfileCard: React.FC<ProfileCardProps> = ({
               style={[styles.actionButton, styles.superLikeButton]} 
               onPress={handleSuperLike}
             >
-              <Star size={24} color={colors.tertiary} />
+              <Star size={28} color={colors.tertiary} style={{ textShadowColor: colors.tertiary, textShadowRadius: 8 }} />
             </TouchableOpacity>
             
             <TouchableOpacity 

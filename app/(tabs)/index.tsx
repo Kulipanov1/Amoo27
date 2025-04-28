@@ -15,6 +15,12 @@ import { RefreshCw } from 'lucide-react-native';
 import { translations } from '@/constants/translations';
 import { usePotentialMatches, useLikeUser, useDislikeUser, useSuperLikeUser } from '@/lib/api';
 
+function AmooLogo() {
+  return (
+    <Text style={{ fontSize: 28, fontWeight: '700', color: colors.primary, textAlign: 'center' }}>Amoo</Text>
+  );
+}
+
 export default function DiscoverScreen() {
   const router = useRouter();
   
@@ -298,7 +304,7 @@ export default function DiscoverScreen() {
       {/* App Logo */}
       <View style={styles.header}>
         <View style={styles.logoContainer}>
-          <Text style={styles.logoText}>Amoo</Text>
+          <AmooLogo />
         </View>
       </View>
       
@@ -376,12 +382,6 @@ const styles = StyleSheet.create({
   logoContainer: {
     alignItems: 'center',
     justifyContent: 'center',
-  },
-  logoText: {
-    fontSize: 28,
-    fontWeight: '700',
-    color: colors.primary,
-    textAlign: 'center',
   },
   cardsContainer: {
     flex: 1,
