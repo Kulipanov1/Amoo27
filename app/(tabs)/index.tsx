@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { StyleSheet, View, Text, SafeAreaView, Platform, ActivityIndicator } from 'react-native';
+import { StyleSheet, View, Text, SafeAreaView, Platform, ActivityIndicator, Alert } from 'react-native';
 import { StatusBar } from 'expo-status-bar';
 import { useRouter } from 'expo-router';
 import { User, Gender, LookingFor } from '@/types/user';
@@ -130,27 +130,18 @@ export default function DiscoverScreen() {
   const handleSwipeRight = () => {
     if (potentialMatches.length > 0) {
       const userId = potentialMatches[0].id;
-      // Save current user before removing
       setPreviousUsers(prev => [potentialMatches[0], ...prev].slice(0, 10));
-      
-      // Add to likes and remove from potential matches
       addLikedUser(userId);
       setPotentialMatches(potentialMatches.slice(1));
-      
-      // Call API
       likeUser({ likedUserId: userId })
         .then(data => {
-          // If there's a match, show modal
           if (data?.match) {
             createMatch(userId, data.match.id);
           }
         })
         .catch(err => {
-          console.error("Error liking user:", err);
-          // Simulate match for demo purposes
-          if (Math.random() < 0.3) {
-            createMatch(userId);
-          }
+          setError('Ошибка при лайке. Попробуйте позже.');
+          Alert.alert('Ошибка', 'Ошибка при лайке. Попробуйте позже.');
         });
     }
   };
@@ -282,12 +273,20 @@ export default function DiscoverScreen() {
       });
   };
 
-  if (potentialMatches.length === 0) {
+  if (potentialMatches.length === 0 && !isLoading) {
     return (
       <View style={styles.emptyStateContainer}>
         <Text style={styles.emptyStateTitle}>{translations.noMoreProfiles}</Text>
         <Text style={styles.emptyStateText}>{translations.noMoreProfilesDesc}</Text>
         <Button title="Обновить" onPress={handleRefresh} />
+      </View>
+    );
+  }
+  if (isLoading) {
+    return (
+      <View style={styles.loadingContainer}>
+        <ActivityIndicator size="large" color={colors.primary} />
+        <Text style={styles.loadingText}>{translations.loading}</Text>
       </View>
     );
   }

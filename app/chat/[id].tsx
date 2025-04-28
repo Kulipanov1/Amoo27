@@ -144,6 +144,14 @@ export default function ChatScreen() {
     }
   }, [matchId, match]);
   
+  if (!match && !isLoading) {
+    return (
+      <View style={styles.loadingContainer}>
+        <Text style={{ color: colors.textSecondary, fontSize: 18 }}>Чат не найден или произошла ошибка.</Text>
+        <Button title="К списку чатов" onPress={() => router.replace('/(tabs)/matches')} />
+      </View>
+    );
+  }
   if (isLoading) {
     return (
       <View style={styles.loadingContainer}>
@@ -152,16 +160,16 @@ export default function ChatScreen() {
     );
   }
   
-  if (!match) {
+  const matchedUserData = mockUsers.find(user => user.id === match.matchedUserId);
+  if (!matchedUserData) {
     return (
-      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: colors.background }}>
-        <Text style={{ color: colors.textSecondary, fontSize: 18 }}>Чат не найден...</Text>
+      <View style={styles.loadingContainer}>
+        <Text style={{ color: colors.textSecondary, fontSize: 18 }}>Пользователь не найден.</Text>
         <Button title="К списку чатов" onPress={() => router.replace('/(tabs)/matches')} />
       </View>
     );
   }
   
-  const matchedUserData = mockUsers.find(user => user.id === match.matchedUserId);
   // Make sure user has all required fields
   const matchedUser: User | undefined = matchedUserData ? {
     ...matchedUserData,
