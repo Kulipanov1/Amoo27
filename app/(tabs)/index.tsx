@@ -303,9 +303,7 @@ export default function DiscoverScreen() {
       
       {/* App Logo */}
       <View style={styles.header}>
-        <View style={styles.logoContainer}>
-          <AmooLogo />
-        </View>
+        <AmooLogo />
       </View>
       
       <View style={styles.cardsContainer}>

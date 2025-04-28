@@ -13,7 +13,7 @@ import {
 import { Image } from 'expo-image';
 import { Video, ResizeMode } from 'expo-av';
 import { LinearGradient } from 'expo-linear-gradient';
-import { Heart, X, Star, Info, MapPin, Briefcase, GraduationCap, Check, RotateCcw, ChevronUp, Play } from 'lucide-react-native';
+import { Heart, X, Star, Info, MapPin, Briefcase, GraduationCap, Check, RotateCcw, ChevronUp, Play, Zap } from 'lucide-react-native';
 import { User } from '@/types/user';
 import { colors } from '@/constants/colors';
 import { borderRadius, fontSize, fontWeight, shadows, spacing } from '@/constants/theme';
@@ -379,7 +379,8 @@ export const ProfileCard: React.FC<ProfileCardProps> = ({
               style={[styles.actionButton, styles.superLikeButton]} 
               onPress={handleSuperLike}
             >
-              <Star size={28} color={colors.tertiary} style={{ textShadowColor: colors.tertiary, textShadowRadius: 8 }} />
+              <Zap size={28} color={colors.tertiary} style={{ textShadowColor: colors.tertiary, textShadowRadius: 8 }} />
+              <Text style={{ color: colors.tertiary, fontWeight: 'bold', fontSize: 12, marginTop: 2 }}>Суперлайк</Text>
             </TouchableOpacity>
             
             <TouchableOpacity 
@@ -484,7 +485,8 @@ export const ProfileCard: React.FC<ProfileCardProps> = ({
                   handleSuperLike();
                 }}
               >
-                <Star size={24} color={colors.tertiary} />
+                <Zap size={28} color={colors.tertiary} style={{ textShadowColor: colors.tertiary, textShadowRadius: 8 }} />
+                <Text style={{ color: colors.tertiary, fontWeight: 'bold', fontSize: 12, marginTop: 2 }}>Суперлайк</Text>
               </TouchableOpacity>
               
               <TouchableOpacity 
