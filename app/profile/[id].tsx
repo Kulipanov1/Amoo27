@@ -54,8 +54,11 @@ export default function ProfileDetailScreen() {
   
   const user = mockUsers.find(user => user.id === id);
   
-  if (!user) {
-    React.useEffect(() => {
+  const [notFound, setNotFound] = React.useState(false);
+
+  React.useEffect(() => {
+    if (!user) {
+      setNotFound(true);
       Alert.alert(
         translations.error,
         'Пользователь не найден',
@@ -66,8 +69,15 @@ export default function ProfileDetailScreen() {
           },
         ]
       );
-    }, []);
-    return null;
+    }
+  }, [user]);
+
+  if (notFound) {
+    return (
+      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: colors.background }}>
+        <Text style={{ color: colors.textSecondary, fontSize: 18 }}>Пользователь не найден...</Text>
+      </View>
+    );
   }
   
   const [activePhotoIndex, setActivePhotoIndex] = React.useState(0);
@@ -87,13 +97,13 @@ export default function ProfileDetailScreen() {
               },
               {
                 text: translations.keepSwiping,
-                onPress: () => safeBack(router),
+                onPress: () => router.replace('/'),
                 style: 'cancel',
               },
             ]
           );
         } else {
-          safeBack(router);
+          router.replace('/');
         }
       },
       onError: (error) => {
@@ -147,7 +157,7 @@ export default function ProfileDetailScreen() {
               },
               {
                 text: translations.keepSwiping,
-                onPress: () => safeBack(router),
+                onPress: () => router.replace('/'),
                 style: 'cancel',
               },
             ]
@@ -159,7 +169,7 @@ export default function ProfileDetailScreen() {
             [
               {
                 text: 'OK',
-                onPress: () => safeBack(router),
+                onPress: () => router.replace('/'),
               },
             ]
           );
