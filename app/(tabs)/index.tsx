@@ -282,6 +282,16 @@ export default function DiscoverScreen() {
       });
   };
 
+  if (potentialMatches.length === 0) {
+    return (
+      <View style={styles.emptyStateContainer}>
+        <Text style={styles.emptyStateTitle}>{translations.noMoreProfiles}</Text>
+        <Text style={styles.emptyStateText}>{translations.noMoreProfilesDesc}</Text>
+        <Button title="Обновить" onPress={handleRefresh} />
+      </View>
+    );
+  }
+
   return (
     <SafeAreaView style={styles.container}>
       <StatusBar style={Platform.OS === 'ios' ? 'dark' : 'auto'} />

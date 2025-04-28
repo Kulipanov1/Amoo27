@@ -12,7 +12,8 @@ import {
   Keyboard,
   ActivityIndicator,
   Dimensions,
-  Alert
+  Alert,
+  Button
 } from 'react-native';
 import { StatusBar } from 'expo-status-bar';
 import { useLocalSearchParams, useRouter, Stack } from 'expo-router';
@@ -152,7 +153,12 @@ export default function ChatScreen() {
   }
   
   if (!match) {
-    return null;
+    return (
+      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: colors.background }}>
+        <Text style={{ color: colors.textSecondary, fontSize: 18 }}>Чат не найден...</Text>
+        <Button title="К списку чатов" onPress={() => router.replace('/(tabs)/matches')} />
+      </View>
+    );
   }
   
   const matchedUserData = mockUsers.find(user => user.id === match.matchedUserId);
